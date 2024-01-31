@@ -24,7 +24,7 @@ fn main() {
             Arg::with_name("ports")
                 .long("ports")
                 .value_name("PORTS")
-                .help("Onnly one port to scan or comma-separated list of ports to scan (e.g., 80,443)"),
+                .help("Only one port to scan or comma-separated list of ports to scan (e.g., 80,443)"),
         )
         .arg(
             Arg::with_name("start-port")
@@ -68,12 +68,12 @@ fn main() {
             .map(|p| p.parse().expect("Invalid port number (1 to 65535)")) // Prends chaque item dans la liste et convertis le port initialement en str en u16
             .collect(); // On collecte les résultats dans un vecteur
 
-        // Scan specified ports
+        // On scan les ports que l'on vient de collecter dans le vecteur
         for &port in &ports {
             scan_port(target_ip, port);
         }
     } else {
-        // Scan the default range from start_port to end_port
+        // Scan la range d'IP commencant par start_port et finissant pas end_port
         for port in start_port..=end_port {
             scan_port(target_ip, port);
         }
