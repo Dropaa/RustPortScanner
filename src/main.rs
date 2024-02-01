@@ -1,10 +1,24 @@
 use std::net::{IpAddr, TcpStream};
 use clap::{App, Arg};
+use serde::Serialize;
 
-fn scan_port(ip: IpAddr, port: u16) {
+
+#[derive(Serialize)]
+struct PortResult {
+    port: u16,
+    status: String,
+}
+
+fn scan_port(ip: IpAddr, port: u16) -> PortResult {
     match TcpStream::connect((ip, port)) { //Match = sorte de try and catch en python. Si le flux tcp arrive à se connecter au port renvoi Ok sinon Err.
-        Ok(_) => println!("Port {} is open", port), // Ici l'underscore est un "plcaeholder" vu que je ne peux pas faire Ok(). Je pourrais catch la réponse du Stream et print le Stream également.
-        Err(_) => println!("Port {} close", port),
+        Ok(_) => { // Ici l'underscore est un "plcaeholder" vu que je ne peux pas faire Ok(). Je pourrais catch la réponse du Stream et print le Stream également.
+            println!("Port {} is open", port);
+            PortResult { port, status: "open".to_string() }
+        }
+        Err(_) => {
+            println!("Port {} closed", port);
+            PortResult { port, status: "closed".to_string() }
+        }
     }
 }
 
@@ -61,6 +75,8 @@ fn main() {
         .parse()
         .expect("Invalid end port (max 65535)");
 
+    let results: Vec<PortResult>; // On va créer ici un vecteur qui à la forme de la structure de PortResult --> port, status
+
     // Si l'argument --ports est utilisé, on ne va scanner que ceux-la et ne pas passer par une range de ports
     if let Some(ports_str) = matches.value_of("ports") { //Si il y a bien l'argument --ports, matches.value_of("ports") retournera "Some" sinon "None".
         let ports: Vec<u16> = ports_str // Je vais stocker tous les ports dans un vecteur (tableau like mais en mieux :3)
@@ -68,14 +84,24 @@ fn main() {
             .map(|p| p.parse().expect("Invalid port number (1 to 65535)")) // Prends chaque item dans la liste et convertis le port initialement en str en u16
             .collect(); // On collecte les résultats dans un vecteur
 
-        // On scan les ports que l'on vient de collecter dans le vecteur
-        for &port in &ports {
-            scan_port(target_ip, port);
-        }
+        results = ports
+            .iter()
+            .map(|&port| scan_port(target_ip, port))
+            .collect();
+
     } else {
         // Scan la range d'IP commencant par start_port et finissant pas end_port
-        for port in start_port..=end_port {
-            scan_port(target_ip, port);
-        }
+        results = (start_port..=end_port)
+            .map(|port| scan_port(target_ip, port))
+            .collect();
     }
+
+    // On sérialise les résultats dans un fichier JSON
+    let json_results = serde_json::to_string_pretty(&results).expect("Failed to serialize results");
+
+    // On écris le JSON dans un fichier
+    let filename = format!("port_scan_results.json");
+    std::fs::write(&filename, json_results).expect("Failed to write JSON file");
+
+    println!("Results written to file: {}", filename);
 }
