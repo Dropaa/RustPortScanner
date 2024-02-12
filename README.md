@@ -15,13 +15,13 @@ To use the port scanner, make sure you have Rust and Cargo installed. If not, yo
 Clone the repository:
 
 ```bash
-git clone [https://github.com/yourusername/port-scanner.git]
+git clone https://github.com/Dropaa/RustPortScanner.git
 ```
 
 Navigate to the project directory:
 
 ```bash
-cd port-scanner
+cd RustPortScanner
 ```
 
 Compile the project:
@@ -35,7 +35,7 @@ cargo build --release
 Run the compiled binary with the following command:
 
 ```bash
-./target/release/port-scanner [OPTIONS]
+./target/release/RustPortScanner [OPTIONS]
 ```
 
 ### Options
@@ -52,17 +52,23 @@ Run the compiled binary with the following command:
 Scan ports 1 to 1024 on the IP address 192.168.1.100:
 
 ```bash
-./target/release/port-scanner --ip 192.168.1.100
+./target/release/RustPortScanner --ip 192.168.1.100
 ```
 
 Scan ports 80 and 443 on the IP address 192.168.1.100 using a stealth scan:
 
 ```bash
-./target/release/port-scanner --ip 192.168.1.100 --ports 80,443 --stealth
+./target/release/RustPortScanner --ip 192.168.1.100 --ports 80,443 --stealth
 ```
 
 Scan ports 1 to 1024 on the IP address 192.168.1.100 and perform service detection:
 
 ```bash
-./target/release/port-scanner --ip 192.168.1.100 --service
+./target/release/RustPortScanner --ip 192.168.1.100 --service
+```
+
+Scan ports 1234 to 9999 on the IP address 192.168.1.100 and perform service detection:
+
+```bash
+./target/release/RustPortScanner --ip 192.168.1.100 --start-port 1234 --end-port 9999 --service
 ```
