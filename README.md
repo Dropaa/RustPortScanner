@@ -15,7 +15,7 @@ To use the port scanner, make sure you have Rust and Cargo installed. If not, yo
 Clone the repository:
 
 ```bash
-git clone [https://github.com/yourusername/port-scanner.git](https://github.com/Dropaa/RustPortScanner)
+git clone [https://github.com/yourusername/port-scanner.git]
 ```
 
 Navigate to the project directory:
